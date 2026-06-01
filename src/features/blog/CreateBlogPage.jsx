@@ -11,14 +11,15 @@ import Textarea from '../../components/ui/Textarea.jsx';
 import TagInput from '../../components/ui/TagInput.jsx';
 import ImageUploadZone from '../../components/ui/ImageUploadZone.jsx';
 
+// ─── ZOD SCHEMA VALIDATION UPDATE ──────────────────────────────
 const postSchema = z.object({
   title: z
     .string()
-    .min(5, 'Title must be at least 5 characters')
+    .min(1, 'Title must be at least 1 character') // 5 se kam karke 1 kar diya
     .max(300, 'Title must be at most 300 characters'),
   content: z
     .string()
-    .min(50, 'Content must be at least 50 characters')
+    .min(1, 'Content cannot be empty') // ❌ 50 characters wali limit YAHAN SE BHI HATA DI HAI ✅
     .max(50000, 'Content must be at most 50,000 characters'),
 });
 
