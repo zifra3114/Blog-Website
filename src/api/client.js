@@ -11,8 +11,11 @@ export const setTokenRefreshCallback = (cb) => {
 let isRefreshing = false;
 let failedQueue = [];
 
+// ✅ FIXED: Hardcoded base URL ki jagah environment variable use kiya hai, fallback ke sath
+const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://zifra-blog-backend.hf.space/api/v1';
+
 const client = axios.create({
-  baseURL: '/api/v1',
+  baseURL: BACKEND_BASE_URL,
   withCredentials: true, // send HttpOnly refresh token cookie
   headers: {
     'Content-Type': 'application/json',
@@ -88,9 +91,10 @@ client.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Use raw axios to avoid interceptor loop
+        // ✅ FIXED: Yahan pehle '/api/v1/auth/refresh' relative URL tha, jo frontend URL par request bhej raha tha.
+        // Ab yeh exact live Hugging Face URL par hi refresh hit karega.
         const { data } = await axios.post(
-          '/api/v1/auth/refresh',
+          `${BACKEND_BASE_URL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
