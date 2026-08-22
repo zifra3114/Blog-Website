@@ -11,14 +11,15 @@ import Textarea from '../../components/ui/Textarea.jsx';
 import TagInput from '../../components/ui/TagInput.jsx';
 import ImageUploadZone from '../../components/ui/ImageUploadZone.jsx';
 
+// ─── ZOD SCHEMA VALIDATION UPDATE ──────────────────────────────
 const postSchema = z.object({
   title: z
     .string()
-    .min(5, 'Title must be at least 5 characters')
+    .min(1, 'Title must be at least 1 character')
     .max(300, 'Title must be at most 300 characters'),
   content: z
     .string()
-    .min(50, 'Content must be at least 50 characters')
+    .min(1, 'Content cannot be empty')
     .max(50000, 'Content must be at most 50,000 characters'),
 });
 
@@ -26,6 +27,10 @@ const CreateBlogPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { mutationLoading, mutationError } = useSelector((state) => state.blog);
+  
+  // ─── UPDATE: REDUX SE AUTH STATE NIKALEN ──────────────────────
+  // Note: Agar aapke auth slice ka naam 'auth' ke alawa kuch aur hai (like 'user'), toh use wahan change karlein.
+  const { user, isAuthenticated } = useSelector((state) => state.auth || {});
 
   const [tags, setTags] = useState([]);
   const [status, setStatus] = useState('draft');
@@ -33,6 +38,15 @@ const CreateBlogPage = () => {
   const [coverImageFile, setCoverImageFile] = useState(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // ─── UPDATE: AUTH GUARD ROUTE PROTECTION ──────────────────────
+  useEffect(() => {
+    // Agar user logged in nahi hai ya token fail ho chuka hai, use login par bhejdo
+    if (isAuthenticated === false || (!user && !localStorage.getItem('token'))) {
+      console.log('🔒 Unauthorized access attempt! Redirecting to login...');
+      navigate('/login');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const {
     register,
@@ -60,13 +74,11 @@ const CreateBlogPage = () => {
   const handleCoverImageUpload = async (file) => {
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file');
       return;
     }
 
-    // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Image must be less than 5MB');
       return;
@@ -92,12 +104,19 @@ const CreateBlogPage = () => {
   };
 
   const onSubmit = async (data, submissionStatus) => {
+    // Double check agar login ke bina bypass ho gaya ho
+    if (!user) {
+      alert('Your session has expired. Please log in again.');
+      navigate('/login');
+      return;
+    }
+
     console.log('📝 Submitting post with status:', submissionStatus);
 
     const payload = {
       ...data,
       tags,
-      status: submissionStatus, // Use the passed status directly, not state
+      status: submissionStatus,
     };
     if (coverImage.url) {
       payload.coverImage = coverImage;
@@ -110,22 +129,28 @@ const CreateBlogPage = () => {
 
       console.log('✅ Post created successfully:', { slug: result.slug, status: result.status });
 
-      // Show success message
       if (submissionStatus === 'published') {
         setSuccessMessage('Post published successfully! Redirecting...');
       } else {
         setSuccessMessage('Draft saved successfully! Redirecting...');
       }
 
-      // Navigate after a short delay to show the success message
       setTimeout(() => {
         navigate(`/blog/${result.slug}`);
       }, 1500);
     } catch (error) {
-      // Error is already in Redux state, will be displayed below
       console.error('❌ Failed to create post:', error);
     }
   };
+
+  // Agar state check chal rahi ho toh screen blank ya loader dikha sakte hain
+  if (isAuthenticated === false || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p className="text-gray-500">Checking authorization, please wait...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -159,7 +184,6 @@ const CreateBlogPage = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
-        {/* Cover image upload */}
         <div>
           <label className="insta-label" style={{ display: 'block', marginBottom: '12px', fontSize: '14px', fontWeight: '600' }}>
             Cover Image <span style={{ color: 'var(--insta-text-tertiary)', fontWeight: '400' }}>(optional)</span>
@@ -191,7 +215,6 @@ const CreateBlogPage = () => {
           error={errors.content?.message}
         />
 
-        {/* Tags */}
         <div>
           <label className="insta-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '600' }}>
             Tags <span style={{ color: 'var(--insta-text-tertiary)', fontWeight: '400' }}>(up to 10)</span>
@@ -199,12 +222,10 @@ const CreateBlogPage = () => {
           <TagInput tags={tags} onChange={setTags} maxTags={10} />
         </div>
 
-        {/* Action Buttons - Beautiful Design */}
         <div className="editor-action-buttons">
           <button
             type="button"
             onClick={() => {
-              console.log('💾 Save as Draft clicked');
               handleSubmit((data) => onSubmit(data, 'draft'))();
             }}
             disabled={mutationLoading}
@@ -218,7 +239,6 @@ const CreateBlogPage = () => {
           <button
             type="button"
             onClick={() => {
-              console.log('🚀 Publish Now clicked');
               handleSubmit((data) => onSubmit(data, 'published'))();
             }}
             disabled={mutationLoading}
