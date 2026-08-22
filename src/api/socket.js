@@ -3,7 +3,7 @@ import { getAccessToken, setTokenRefreshCallback } from './client.js';
 
 let socket = null;
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 5;
+const MAX_RECONNECT_ATTEMPTS = 3; // 5 se kam karke 3 kiya taake background block na ho
 
 // Register socket reconnection on token refresh
 setTokenRefreshCallback(() => {
@@ -34,19 +34,21 @@ export const connectSocket = () => {
   }
 
   const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+  
+  // OPTIMIZED CONFIGURATION FOR HUGGING FACE SPACES
   socket = io(socketUrl, {
     auth: { token },
     withCredentials: true,
-    transports: ['websocket', 'polling'],
+    transports: ['polling', 'websocket'], // Polling pehle, taake connection instant establish ho
     reconnection: true,
     reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
     reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    timeout: 20000,
+    reconnectionDelayMax: 3000,
+    timeout: 5000, // Timeout 20s se kam karke 5s kiya taake lag bilkul khatam ho jaye
   });
 
   socket.on('connect', () => {
-    console.log('✅ Socket connected:', socket.id);
+    console.log('✅ Socket connected successfully:', socket.id);
     reconnectAttempts = 0;
   });
 
@@ -55,7 +57,7 @@ export const connectSocket = () => {
     console.warn(`Socket connection error (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}):`, err.message);
 
     if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-      console.error('Max reconnection attempts reached. Socket connection failed.');
+      console.error('Max reconnection attempts reached. Socket connection failed safely.');
       disconnectSocket();
     }
   });

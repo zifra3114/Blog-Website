@@ -21,10 +21,10 @@ body {
   background-color: #000000;
 }
 
-/* Custom Instagram Custom Spinner */
-.insta-spinner {
-  width: 32px;
-  height: 32px;
+/* Custom Instagram Custom Spinner (app-level loading screen) */
+.app-loading-spinner {
+  width: clamp(24px, 6vw, 32px);
+  height: clamp(24px, 6vw, 32px);
   border: 4px solid rgba(255, 255, 255, 0.1);
   border-top: 4px solid #0095F6; /* Instagram Active Blue */
   border-radius: 50%;
@@ -300,6 +300,8 @@ body {
   border-radius: var(--insta-radius-sm);
   background-size: cover;
   background-position: center;
+  overflow: hidden;
+  background-color: #1a1a1a;
 }
 
 .pic-main {
@@ -476,14 +478,6 @@ body {
   display: block;
 }
 
-/* Clear border-radius on images inside placeholders */
-.insta-card-img-placeholder {
-  width: 100%;
-  flex: 1;
-  border-radius: 6px;
-  overflow: hidden;
-  background-color: #1a1a1a;
-}
 /* Custom Subtitle spacing for register layout specifically */
 .insta-register-subtitle {
   color: var(--insta-text-secondary);
@@ -527,7 +521,8 @@ body {
     padding-top: 40px !important;
     padding-bottom: 40px !important;
   }
-}/* Core structure to pull the right-panel style into full screen center */
+}
+/* Core structure to pull the right-panel style into full screen center */
 .insta-global-center-layout {
   display: flex !important;
   align-items: center !important;
@@ -689,17 +684,20 @@ body {
   color: #ffffff;
   display: flex;
   flex-direction: column;
+  padding-top: 90px;   /* navbar height ke barabar */
 }
 
 /* Luxury Header Navbar Glass */
 .insta-navbar-master {
   background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
-  border-b: 1px solid #121212;
-  position: sticky;
+  border-bottom: 1px solid #121212;
+  position: fixed;   /* sticky se fixed kar diya */
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
-  height: 60px;
+  height: 80px;
   display: flex;
   align-items: center;
 }
@@ -718,10 +716,11 @@ body {
 /* Brand Typography Gradient */
 .insta-nav-logo-link {
   text-decoration: none;
-  font-size: 22px;
+  font-size: 28px;   /* pehle 22px tha */
   font-weight: 700;
   letter-spacing: -0.5px;
   flex-shrink: 0;
+  margin-left: -10px;
 }
 
 .insta-nav-text-gradient {
@@ -734,7 +733,7 @@ body {
 .insta-nav-search-container {
   flex: 1;
   max-width: 968px;
-  margin-left:40px;
+  margin-left: 40px;
 }
 
 @media (max-width: 768px) {
@@ -1469,7 +1468,7 @@ body {
   border: 3px solid var(--insta-border-tertiary);
   border-top-color: var(--insta-accent-blue);
   border-radius: 50%;
-  animation: insta-spin 0.8s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 .insta-spinner-sm {
@@ -1487,12 +1486,6 @@ body {
   width: 40px;
   height: 40px;
   border-width: 4px;
-}
-
-@keyframes insta-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* Empty State */
@@ -1752,6 +1745,15 @@ body {
 
   .logged-out-sub-description {
     font-size: 16px;
+  }
+
+  .logged-out-cta-actions-group {
+    flex-wrap: wrap;
+  }
+
+  .logged-out-cta-actions-group a {
+    flex: 1 1 auto;
+    text-align: center;
   }
 
   /* Comment section mobile */
@@ -3028,18 +3030,19 @@ body {
 /* --- Search Bar Styles --- */
 .search-form {
   width: 100%;
-  max-width: 360px;
+  max-width: 550px;   /* pehle 360px tha */
   margin: 0 auto;
   padding: 0 16px;
   box-sizing: border-box;
   position: relative;
 }
 
+
 .search-container {
   display: flex;
   align-items: center;
   border-radius: var(--insta-radius-lg, 8px);
-  padding: 8px 16px;
+  padding: 12px 18px;   /* thora zyada height ke liye */
   transition: all 0.2s ease;
   border: 1px solid var(--insta-border-tertiary, #dbdbdb);
   background-color: var(--insta-bg-secondary, #fafafa);
@@ -3358,11 +3361,12 @@ body {
    ========================================== */
 
 .feed-page-container {
-  max-width: 1980px;
+  max-width: 780px;
   margin: 0 auto;
-  padding: 10px 16px 10px -40px;
+  padding: 10px 16px 10px 16px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin-left: 160px;
 }
 
 .feed-layout-grid {
@@ -3374,23 +3378,28 @@ body {
 /* --- Left & Right Sidebars Common --- */
 .feed-sidebar-left {
   width: 300px;
-  margin-left: -90px;
   flex-shrink: 0;
+  left: 70px;
+  position: fixed;
+  top: calc(var(--insta-navbar-height) + 36px);
+  max-height: calc(100vh - var(--insta-navbar-height) - 32px);
+  overflow-y: auto;
 }
-
 .feed-sidebar-right {
-  width: 300px;
+  width: 350px;
   flex-shrink: 0;
+  margin-right: -150px;
+  /* position: fixed; */
 }
-
 .feed-sticky-wrapper {
   position: sticky;
-  top: 70px; /* Adjust based on navbar height */
+  top: 76px;   /* navbar (60px fixed) + 16px gap = niche se shuru hoga */
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
 }
-
 @media (max-width: 1024px) {
   .feed-sidebar-left { display: none; }
 }
@@ -3402,6 +3411,7 @@ body {
 @media (max-width: 768px) {
   .feed-page-container {
     padding: 8px 12px 16px 12px;
+    margin-left: 0;
   }
 
   .feed-layout-grid {
@@ -3421,6 +3431,7 @@ body {
 @media (max-width: 768px) {
   .feed-main-content {
     max-width: 100%;
+    width: 100%;
     gap: 12px;
   }
 }
@@ -3713,6 +3724,24 @@ body {
   font-weight: 700;
   margin-bottom: 20px;
   color: #1a1a1a;
+}
+
+@media (max-width: 480px) {
+  .logged-out-hero-inner {
+    padding: 40px 16px;
+  }
+
+  .logged-out-main-headline {
+    font-size: 28px;
+  }
+
+  .logged-out-sub-description {
+    font-size: 15px;
+  }
+
+  .logged-out-trending-section {
+    padding: 24px 12px;
+  }
 }
 
 /* Blog Content Styles */
@@ -4121,3 +4150,33 @@ body {
   margin-top: 40px;
 }
 
+@media (max-width: 640px) {
+  .followers-container {
+    padding: 16px 12px;
+  }
+
+  .profile-header {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .profile-name {
+    font-size: 1.15rem;
+  }
+
+  .tab-button {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+
+  .user-card {
+    padding: 12px 14px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .follow-btn {
+    padding: 7px 14px;
+    font-size: 0.82rem;
+  }
+}
