@@ -82,13 +82,17 @@ const RegisterPage = () => {
           </div>
         </div>
 
-        {/* RIGHT SIDE: Perfect Centered Dark Register Form */}
+        {/* RIGHT SIDE: Professional Register Form */}
         <div className="insta-right-panel">
           <div className="insta-login-container">
-            
+
+            <div className="insta-brand-logo-holder login-mini-logo">
+              <img src={Logo} alt="DevBlog Logo" className="insta-gradient-logo" />
+            </div>
+
             <div className="insta-header-section">
-              <h3>Create an account</h3>
-              <p className="insta-register-subtitle">Sign up to see photos and insights from your community.</p>
+              <h3>Create Your Account</h3>
+              <p className="auth-subtitle-text">Join DevBlog community today</p>
             </div>
 
             {/* Error Message Alert */}
@@ -103,79 +107,84 @@ const RegisterPage = () => {
 
             {/* Register Form */}
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="insta-form-layout spec-register-flow">
-              
+
               <div className="insta-input-box-wrapper">
+                <label className="modern-input-label">Full Name</label>
                 <Input
                   label=""
                   name="name"
                   type="text"
-                  placeholder="Full Name"
+                  placeholder="Enter your full name"
                   register={register}
                   error={errors.name?.message}
                 />
               </div>
 
               <div className="insta-input-box-wrapper">
+                <label className="modern-input-label">Username</label>
                 <Input
                   label=""
                   name="username"
                   type="text"
-                  placeholder="Username"
+                  placeholder="Choose a username"
                   register={register}
                   error={errors.username?.message}
                 />
               </div>
 
               <div className="insta-input-box-wrapper">
+                <label className="modern-input-label">Email Address</label>
                 <Input
                   label=""
                   name="email"
                   type="email"
-                  placeholder="Email address"
+                  placeholder="Enter your email"
                   register={register}
                   error={errors.email?.message}
                 />
               </div>
 
               <div className="insta-input-box-wrapper">
+                <label className="modern-input-label">Password</label>
                 <Input
                   label=""
                   name="password"
                   type="password"
-                  placeholder="Password (Min. 8 characters)"
+                  placeholder="Create a password (min. 8 characters)"
                   register={register}
                   error={errors.password?.message}
                 />
               </div>
 
               <div className="insta-input-box-wrapper">
+                <label className="modern-input-label">Confirm Password</label>
                 <Input
                   label=""
                   name="confirmPassword"
                   type="password"
-                  placeholder="Confirm Password"
+                  placeholder="Confirm your password"
                   register={register}
                   error={errors.confirmPassword?.message}
                 />
               </div>
 
               <Button type="submit" loading={loading} className="insta-login-btn-override">
-                Sign up
+                {loading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
 
             {/* Bottom Actions Switch Box */}
-            <div className="insta-bottom-box">
-              <div className="insta-signin-footer-box">
-                <span>Already have an account? </span>
-                <Link to="/login" className="insta-blue-anchor-link">
-                  Log in
-                </Link>
-              </div>
+            <div className="auth-divider-section">
+              <div className="auth-divider-line"></div>
+              <span className="auth-divider-text">OR</span>
+              <div className="auth-divider-line"></div>
             </div>
 
-            <div className="meta-footer-brand">
-              <span>∞ Meta</span>
+            <div className="insta-signin-footer-box">
+              <span>Already have an account? </span>
+              <Link to="/login" className="insta-blue-anchor-link">
+                Sign in
+              </Link>
             </div>
 
           </div>

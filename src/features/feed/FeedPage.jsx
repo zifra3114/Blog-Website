@@ -21,9 +21,8 @@ const FeedPage = () => {
   const { posts, nextCursor, hasMore, loading, error, trending, trendingLoading } =
     useSelector((state) => state.feed);
   const { suggested, suggestedLoading } = useSelector((state) => state.user);
-  
-  // Auth slice se authLoading state bhi nikalein taaki temporary 409 crash state sync ho sake
-  const { user, isAuthenticated, loading: authLoading } = useSelector((state) => state.auth);
+
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   // 1. Fetch Feed Data Fix (Strict Dependency Handling)
   useEffect(() => {
@@ -64,15 +63,6 @@ const FeedPage = () => {
   }, [dispatch, hasMore, loading, nextCursor]);
 
   const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
-
-  // ─── 0. LOADING SCREEN (Jab tak cookie structure pure tarike se verify na ho jaye) ───
-  if (authLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <LoadingSpinner />
-      </div>
-    );
-  }
 
   // ─── 1. NOT AUTHENTICATED (LOGGED OUT HERO VIEW) ───────────────────────────
   if (!isAuthenticated) {

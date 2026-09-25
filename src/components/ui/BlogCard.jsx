@@ -6,6 +6,7 @@ const BlogCard = ({ post }) => {
     title,
     excerpt,
     coverImage,
+    coverVideo,
     tags,
     readTime,
     likeCount,
@@ -18,7 +19,7 @@ const BlogCard = ({ post }) => {
   return (
     <article className="insta-card insta-card-hover" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Cover image */}
-      {coverImage?.url && (
+      {coverImage?.url && !coverVideo?.url && (
         <Link to={`/blog/${slug}`} style={{ display: 'block', width: '100%', height: '240px', overflow: 'hidden' }}>
           <img
             src={coverImage.url}
@@ -27,6 +28,29 @@ const BlogCard = ({ post }) => {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </Link>
+      )}
+
+      {/* Cover video */}
+      {coverVideo?.url && (
+        <div style={{ display: 'block', width: '100%', height: '240px', overflow: 'hidden', backgroundColor: '#000' }}>
+          <video
+            src={coverVideo.url}
+            controls
+            preload="metadata"
+            className="insta-post-fluid-img"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              backgroundColor: '#000'
+            }}
+            onError={(e) => {
+              console.error('Video failed to load:', e);
+            }}
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
       )}
 
       <div style={{ padding: '20px' }}>

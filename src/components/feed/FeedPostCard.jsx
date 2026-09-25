@@ -7,6 +7,7 @@ import { toggleRepost as toggleRepostApi } from '../../api/postApi.js';
 import Avatar from '../ui/Avatar.jsx';
 import CommentSection from '../blog/CommentSection.jsx';
 import ShareModal from './ShareModal.jsx';
+import VideoPlayer from '../ui/VideoPlayer.jsx';
 import '../../styles/globals.css';
 
 const FeedPostCard = ({ post }) => {
@@ -32,6 +33,7 @@ const FeedPostCard = ({ post }) => {
     excerpt,
     content,
     coverImage,
+    coverVideo,
     tags,
     readTime,
     viewCount,
@@ -210,6 +212,11 @@ const FeedPostCard = ({ post }) => {
               <img src={coverImage.url} alt={title} className="insta-post-fluid-img" />
             </Link>
           </div>
+        )}
+
+        {/* Premium Full-bleed Post Cover Media Video */}
+        {coverVideo?.url && (
+          <VideoPlayer videoUrl={coverVideo.url} />
         )}
 
         {/* Dynamic Hash Tags Pill Element */}

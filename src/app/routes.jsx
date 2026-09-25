@@ -1,57 +1,36 @@
-import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AuthLayout from '../components/layout/AuthLayout.jsx';
 import MainLayout from '../components/layout/MainLayout.jsx';
 import ProtectedRoute from '../components/ProtectedRoute.jsx';
 
-// ─── Lazy-loaded pages ─────────────────────────────────────────
+// ─── Direct imports (NO lazy loading) ─────────────────────────────────────────
 
 // Auth
-const LoginPage = lazy(() => import('../features/auth/LoginPage.jsx'));
-const RegisterPage = lazy(() => import('../features/auth/RegisterPage.jsx'));
-const ForgotPasswordPage = lazy(() =>
-  import('../features/auth/ForgotPasswordPage.jsx')
-);
-const ResetPasswordPage = lazy(() =>
-  import('../features/auth/ResetPasswordPage.jsx')
-);
-const VerifyEmailPage = lazy(() =>
-  import('../features/auth/VerifyEmailPage.jsx')
-);
+import LoginPage from '../features/auth/LoginPage.jsx';
+import RegisterPage from '../features/auth/RegisterPage.jsx';
+import ForgotPasswordPage from '../features/auth/ForgotPasswordPage.jsx';
+import ResetPasswordPage from '../features/auth/ResetPasswordPage.jsx';
+import VerifyEmailPage from '../features/auth/VerifyEmailPage.jsx';
 
 // Feed & Blog
-const FeedPage = lazy(() => import('../features/feed/FeedPage.jsx'));
-const BlogListPage = lazy(() => import('../features/blog/BlogListPage.jsx'));
-const BlogDetailPage = lazy(() =>
-  import('../features/blog/BlogDetailPage.jsx')
-);
-const CreateBlogPage = lazy(() =>
-  import('../features/blog/CreateBlogPage.jsx')
-);
-const EditBlogPage = lazy(() => import('../features/blog/EditBlogPage.jsx'));
-const MyBlogsPage = lazy(() => import('../features/blog/MyBlogsPage.jsx'));
+import FeedPage from '../features/feed/FeedPage.jsx';
+import BlogListPage from '../features/blog/BlogListPage.jsx';
+import BlogDetailPage from '../features/blog/BlogDetailPage.jsx';
+import CreateBlogPage from '../features/blog/CreateBlogPage.jsx';
+import EditBlogPage from '../features/blog/EditBlogPage.jsx';
+import MyBlogsPage from '../features/blog/MyBlogsPage.jsx';
 
 // User
-const ProfilePage = lazy(() => import('../features/user/ProfilePage.jsx'));
-const EditProfilePage = lazy(() =>
-  import('../features/user/EditProfilePage.jsx')
-);
-const FollowersPage = lazy(() =>
-  import('../features/user/FollowersPage.jsx')
-);
+import ProfilePage from '../features/user/ProfilePage.jsx';
+import EditProfilePage from '../features/user/EditProfilePage.jsx';
+import FollowersPage from '../features/user/FollowersPage.jsx';
 
 // Features
-const NotificationsPage = lazy(() =>
-  import('../features/notification/NotificationsPage.jsx')
-);
-const SavedBlogsPage = lazy(() =>
-  import('../features/bookmark/SavedBlogsPage.jsx')
-);
-const SearchPage = lazy(() => import('../features/search/SearchPage.jsx'));
-const SettingsPage = lazy(() => import('../features/settings/SettingsPage.jsx'));
-const AdminDashboardPage = lazy(() =>
-  import('../features/admin/AdminDashboardPage.jsx')
-);
+import NotificationsPage from '../features/notification/NotificationsPage.jsx';
+import SavedBlogsPage from '../features/bookmark/SavedBlogsPage.jsx';
+import SearchPage from '../features/search/SearchPage.jsx';
+import SettingsPage from '../features/settings/SettingsPage.jsx';
+import AdminDashboardPage from '../features/admin/AdminDashboardPage.jsx';
 
 // ─── 404 ───────────────────────────────────────────────────────
 

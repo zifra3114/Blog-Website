@@ -5,11 +5,12 @@ import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost, clearMutationError } from './blogSlice.js';
-import { uploadImage } from '../../api/uploadApi.js';
+import { uploadImage, uploadVideo } from '../../api/uploadApi.js';
 import Input from '../../components/ui/Input.jsx';
 import Textarea from '../../components/ui/Textarea.jsx';
 import TagInput from '../../components/ui/TagInput.jsx';
 import ImageUploadZone from '../../components/ui/ImageUploadZone.jsx';
+import VideoUploadZone from '../../components/ui/VideoUploadZone.jsx';
 
 // ─── ZOD SCHEMA VALIDATION UPDATE ──────────────────────────────
 const postSchema = z.object({
@@ -27,7 +28,7 @@ const CreateBlogPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { mutationLoading, mutationError } = useSelector((state) => state.blog);
-  
+
   // ─── UPDATE: REDUX SE AUTH STATE NIKALEN ──────────────────────
   // Note: Agar aapke auth slice ka naam 'auth' ke alawa kuch aur hai (like 'user'), toh use wahan change karlein.
   const { user, isAuthenticated } = useSelector((state) => state.auth || {});
@@ -38,6 +39,9 @@ const CreateBlogPage = () => {
   const [coverImageFile, setCoverImageFile] = useState(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [coverVideo, setCoverVideo] = useState({ url: '', publicId: '' });
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [mediaType, setMediaType] = useState('image'); // 'image' or 'video'
 
   // ─── UPDATE: AUTH GUARD ROUTE PROTECTION ──────────────────────
   useEffect(() => {
@@ -103,6 +107,47 @@ const CreateBlogPage = () => {
     setCoverImageFile(null);
   };
 
+  const handleCoverVideoUpload = async (file) => {
+    if (!file) return;
+
+    const ALLOWED_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-matroska'];
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      alert('Please select a video file (MP4, WebM, MOV, MKV)');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      alert('Video must be less than 50MB');
+      return;
+    }
+
+    setUploadingVideo(true);
+
+    try {
+      const result = await uploadVideo(file);
+      setCoverVideo({ url: result.url, publicId: result.publicId });
+    } catch (err) {
+      alert('Failed to upload video: ' + (err.response?.data?.error?.message || err.message));
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
+  const handleRemoveCoverVideo = () => {
+    setCoverVideo({ url: '', publicId: '' });
+  };
+
+  const handleMediaTypeSwitch = (type) => {
+    setMediaType(type);
+    // Clear the other media type when switching
+    if (type === 'image') {
+      setCoverVideo({ url: '', publicId: '' });
+    } else {
+      setCoverImage({ url: '', publicId: '' });
+      setCoverImageFile(null);
+    }
+  };
+
   const onSubmit = async (data, submissionStatus) => {
     // Double check agar login ke bina bypass ho gaya ho
     if (!user) {
@@ -120,6 +165,9 @@ const CreateBlogPage = () => {
     };
     if (coverImage.url) {
       payload.coverImage = coverImage;
+    }
+    if (coverVideo.url) {
+      payload.coverVideo = coverVideo;
     }
 
     console.log('📤 Post payload:', { title: payload.title, status: payload.status, tagsCount: payload.tags.length });
@@ -184,17 +232,95 @@ const CreateBlogPage = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+        {/* Media Type Toggle */}
         <div>
           <label className="insta-label" style={{ display: 'block', marginBottom: '12px', fontSize: '14px', fontWeight: '600' }}>
-            Cover Image <span style={{ color: 'var(--insta-text-tertiary)', fontWeight: '400' }}>(optional)</span>
+            Cover Media <span style={{ color: 'var(--insta-text-tertiary)', fontWeight: '400' }}>(optional)</span>
           </label>
-          <ImageUploadZone
-            onUpload={handleCoverImageUpload}
-            loading={uploadingCover}
-            currentImage={coverImage.url}
-            onRemove={handleRemoveCoverImage}
-            type="cover"
-          />
+
+          {/* Icon Toggle Buttons */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+            <button
+              type="button"
+              onClick={() => handleMediaTypeSwitch('image')}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: mediaType === 'image'
+                  ? '2px solid var(--insta-accent-blue)'
+                  : '2px solid var(--insta-border-primary)',
+                background: mediaType === 'image'
+                  ? 'rgba(59, 130, 246, 0.1)'
+                  : 'var(--insta-bg-secondary)',
+                color: mediaType === 'image'
+                  ? 'var(--insta-accent-blue)'
+                  : 'var(--insta-text-secondary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
+              Image
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleMediaTypeSwitch('video')}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: mediaType === 'video'
+                  ? '2px solid var(--insta-accent-blue)'
+                  : '2px solid var(--insta-border-primary)',
+                background: mediaType === 'video'
+                  ? 'rgba(59, 130, 246, 0.1)'
+                  : 'var(--insta-bg-secondary)',
+                color: mediaType === 'video'
+                  ? 'var(--insta-accent-blue)'
+                  : 'var(--insta-text-secondary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+              Video
+            </button>
+          </div>
+
+          {/* Conditional Upload Zone */}
+          {mediaType === 'image' ? (
+            <ImageUploadZone
+              onUpload={handleCoverImageUpload}
+              loading={uploadingCover}
+              currentImage={coverImage.url}
+              onRemove={handleRemoveCoverImage}
+              type="cover"
+            />
+          ) : (
+            <VideoUploadZone
+              onUpload={handleCoverVideoUpload}
+              loading={uploadingVideo}
+              currentVideo={coverVideo.url}
+              onRemove={handleRemoveCoverVideo}
+            />
+          )}
         </div>
 
         <Input

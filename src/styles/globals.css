@@ -478,13 +478,57 @@ body {
   display: block;
 }
 
-/* Custom Subtitle spacing for register layout specifically */
-.insta-register-subtitle {
+/* Modern Auth Subtitle - Professional Look */
+.auth-subtitle-text {
   color: var(--insta-text-secondary);
-  font-size: var(--insta-font-size-base);
+  font-size: var(--insta-font-size-sm);
   line-height: 1.4;
   margin-top: 6px !important;
   font-weight: var(--insta-font-weight-normal);
+  letter-spacing: 0.2px;
+}
+
+/* Modern Input Label for Auth Pages */
+.modern-input-label {
+  display: block !important;
+  font-size: var(--insta-font-size-sm);
+  font-weight: var(--insta-font-weight-semibold);
+  color: var(--insta-text-primary);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Auth Divider Section */
+.auth-divider-section {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0 16px 0;
+}
+
+.auth-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--insta-border-secondary);
+}
+
+.auth-divider-text {
+  color: var(--insta-text-tertiary);
+  font-size: var(--insta-font-size-xs);
+  font-weight: var(--insta-font-weight-semibold);
+  padding: 0 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Forgot Password Link Wrapper */
+.auth-forgot-link-wrapper {
+  text-align: right;
+  margin: -6px 0 4px 0;
+}
+
+.auth-forgot-link-wrapper .insta-forgot-anchor {
+  font-size: var(--insta-font-size-sm);
 }
 
 /* Extra safety space tuning for 5 inputs vertical alignment */
@@ -520,6 +564,93 @@ body {
     align-items: flex-start !important;
     padding-top: 40px !important;
     padding-bottom: 40px !important;
+  }
+}
+
+/* Mobile Responsive Auth Pages */
+@media (max-width: 950px) {
+  .insta-right-panel {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .insta-login-container {
+    max-width: 420px;
+    padding: 20px;
+  }
+
+  .login-mini-logo {
+    display: flex !important;
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .insta-viewport-wrapper {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  .insta-split-master {
+    flex-direction: column;
+  }
+
+  .insta-right-panel {
+    padding: 24px 16px;
+    border-left: none;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .insta-login-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
+  }
+
+  .insta-header-section h3 {
+    font-size: 22px;
+  }
+
+  .auth-subtitle-text {
+    font-size: 13px;
+  }
+
+  .insta-input-box-wrapper input {
+    padding: 12px 12px !important;
+    font-size: 15px !important;
+  }
+
+  .modern-input-label {
+    font-size: 13px;
+  }
+
+  .insta-login-btn-override {
+    height: 44px !important;
+    font-size: 15px !important;
+  }
+
+  .insta-signin-footer-box {
+    font-size: 14px;
+    padding: 12px 0;
+  }
+
+  .spec-register-flow {
+    gap: 10px !important;
+  }
+}
+
+/* Tablet responsive */
+@media (max-width: 768px) and (min-width: 577px) {
+  .insta-login-container {
+    max-width: 440px;
+    padding: 24px;
+  }
+
+  .insta-header-section h3 {
+    font-size: 20px;
   }
 }
 /* Core structure to pull the right-panel style into full screen center */
@@ -1463,29 +1594,156 @@ body {
   margin: var(--insta-space-lg) 0;
 }
 
-/* Loading Spinner */
-.insta-spinner {
-  border: 3px solid var(--insta-border-tertiary);
-  border-top-color: var(--insta-accent-blue);
+/* Fullscreen Ultra-Dark Cyber Overlay */
+.devblog-loader-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: #000000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 99999999 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Ambient Background Light Orbs */
+.devblog-glow-orb {
+  position: absolute;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  filter: blur(100px);
+  pointer-events: none;
+  opacity: 0.35;
 }
 
-.insta-spinner-sm {
-  width: 16px;
-  height: 16px;
-  border-width: 2px;
+.orb-primary {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #0868a8 0%, rgba(0,0,0,0) 70%);
+  top: 15%;
+  left: 20%;
+  animation: orbFloat 8s ease-in-out infinite alternate;
 }
 
-.insta-spinner-md {
-  width: 24px;
-  height: 24px;
+.orb-accent {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #940505 0%, #ff0303 40%, rgba(0,0,0,0) 70%);
+  bottom: 10%;
+  right: 20%;
+  animation: orbFloat 6s ease-in-out infinite alternate-reverse;
 }
 
-.insta-spinner-lg {
-  width: 40px;
-  height: 40px;
-  border-width: 4px;
+/* Main Content Box */
+.devblog-loader-content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* Massive Developer Brand Title */
+.devblog-loader-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 0 50px rgba(255, 255, 255, 0.2);
+  animation: scaleUpCinematic 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Blinking Cursor */
+.devblog-cursor {
+  color: #0095f6;
+  font-weight: 300;
+  animation: blinkCursor 0.7s infinite;
+  margin-left: 2px;
+}
+
+/* Subtitle Tagline with "JOURNEY." gradient */
+.devblog-loader-tagline {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: #a8a8a8;
+  margin-top: 18px;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out 0.4s forwards;
+}
+
+/* Matching Exact Instagram/Login Gradient for "JOURNEY." */
+.highlight-gradient {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 60%, #cc2366 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 25px rgba(230, 104, 60, 0.5);
+}
+
+/* Custom Cyber Neon Spinner Ring */
+.devblog-ring-spinner {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-top: 50px;
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out 0.6s forwards;
+}
+
+.devblog-ring-spinner div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin: 7px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  animation: spinRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #0095f6 transparent transparent transparent;
+}
+
+.devblog-ring-spinner div:nth-child(1) { animation-delay: -0.45s; }
+.devblog-ring-spinner div:nth-child(2) { animation-delay: -0.3s; border-color: #e6683c transparent transparent transparent; }
+.devblog-ring-spinner div:nth-child(3) { animation-delay: -0.15s; }
+
+/* Animations */
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, -30px) scale(1.15); }
+}
+
+@keyframes scaleUpCinematic {
+  0% { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Empty State */
@@ -2001,6 +2259,24 @@ body {
   display: block;
 }
 
+/* Video Upload Preview Container */
+.video-upload-preview-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--insta-bg-secondary);
+  border: 1px solid var(--insta-border-secondary);
+}
+
+.video-upload-preview {
+  width: 100%;
+  height: 320px;
+  display: block;
+  background-color: #000;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
 .image-upload-overlay {
   position: absolute;
   inset: 0;
@@ -2086,15 +2362,26 @@ body {
     height: 240px;
   }
 
+  .video-upload-preview {
+    height: 240px;
+  }
+
   .image-upload-overlay {
     flex-direction: column;
     padding: 16px;
+    opacity: 1;
   }
 
   .image-upload-remove-btn,
   .image-upload-change-btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-upload-preview {
+    height: 280px;
   }
 }
 
@@ -4179,4 +4466,21 @@ body {
     padding: 7px 14px;
     font-size: 0.82rem;
   }
+}
+.login-mini-logo {
+  margin: 0 auto 32px auto;
+  width: 60px;
+  height: 60px;
+}
+
+.insta-header-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.centered-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
 }

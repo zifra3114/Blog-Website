@@ -5,6 +5,7 @@ import { fetchPostBySlug, clearCurrentPost, toggleLike, deletePost } from './blo
 import CommentSection from '../../components/blog/CommentSection.jsx';
 import BlogContent from '../../components/blog/BlogContent.jsx';
 import Avatar from '../../components/ui/Avatar.jsx';
+import VideoPlayer from '../../components/ui/VideoPlayer.jsx';
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
@@ -109,6 +110,13 @@ const BlogDetailPage = () => {
             alt={post.title}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
+        </div>
+      )}
+
+      {/* Cover video */}
+      {post.coverVideo?.url && (
+        <div style={{ marginBottom: '32px' }}>
+          <VideoPlayer videoUrl={post.coverVideo.url} />
         </div>
       )}
 

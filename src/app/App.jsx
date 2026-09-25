@@ -1,34 +1,28 @@
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // 👈 useSelector add kiya
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentUser } from '../features/auth/authSlice.js';
 import { fetchUnreadCount } from '../features/notification/notificationSlice.js';
 import { useSocket } from '../hooks/useSocket.js';
 import NotificationToast from '../components/ui/NotificationToast.jsx';
+import LoadingSpinner from '../components/ui/LoadingSpinner.jsx';
+import ChatBot from '../components/ui/ChatBot.jsx';
 import router from './routes.jsx';
 
-const LoadingFallback = () => (
-  <div className="app-loading-container">
-    <div className="insta-spinner"></div>
-  </div>
-);
+const MIN_LOADER_TIME = 1800; // ms — "BLOG APP" (8 letters * 120ms = 960ms) + buffer
 
 const AppContent = () => {
   const dispatch = useDispatch();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  
-  // 1. Apne authSlice se check karein ke user authenticated hai ya nahi
-  // (Apne slice ke mutabik 'user' ya 'isAuthenticated' nikalen)
-  const { user, isAuthenticated } = useSelector((state) => state.auth); 
-  const isUserLoggedIn = isAuthenticated || !!user; 
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const hasLoadedOnce = useRef(false); // Use ref to persist across renders
 
-  // 2. 🔀 Socket ko CONDITIONALLY call karein!
-  // Jab tak user login nahi hoga, socket connection initiate nahi hoga.
-  // Note: Agar useSocket internally useEffect use karta hai, toh hook ko conditional block me nahi daal sakte.
-  // Iska behtar tareeqa ye hai ke useSocket ke andar aap 'isUserLoggedIn' ka check lagayein,
-  // Ya phir useSocket ko tabhi trigger karein jab user available ho (Neeche dekhein agar useSocket error de).
-  useSocket(isUserLoggedIn); 
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const isUserLoggedIn = isAuthenticated || !!user;
 
+  useSocket(isUserLoggedIn);
+
+  // Auth check
   useEffect(() => {
     console.log('App initializing - checking authentication...');
     dispatch(fetchCurrentUser())
@@ -49,16 +43,29 @@ const AppContent = () => {
       });
   }, [dispatch]);
 
-  if (isCheckingAuth) {
-    return <LoadingFallback />;
+  // Minimum loader display time — taake typing animation poori chale
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinTimeElapsed(true);
+      hasLoadedOnce.current = true; // Mark that first load is complete
+    }, MIN_LOADER_TIME);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Jab tak dono (auth check + min time) complete na ho, loader dikhayein
+  const isLoading = isCheckingAuth || !minTimeElapsed;
+
+  // Sirf pehli baar loader dikhao
+  if (isLoading && !hasLoadedOnce.current) {
+    return <LoadingSpinner />;
   }
 
   return (
     <>
-      <Suspense fallback={<LoadingFallback />}>
-        <RouterProvider router={router} />
-      </Suspense>
+      {/* No Suspense fallback after first load */}
+      <RouterProvider router={router} />
       <NotificationToast />
+      <ChatBot />
     </>
   );
 };
