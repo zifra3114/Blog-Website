@@ -5,8 +5,7 @@ import { loginSchema } from "../../utils/validators.js";
 import { useAuth } from "../../hooks/useAuth.js";
 import Input from "../../components/ui/Input.jsx";
 import Button from "../../components/ui/Button.jsx";
-import "../../styles/globals.css";
-
+import "../../styles/auth.css";
 import Logo from "../../assets/logo.png";
 import Image1 from "../../assets/img.jpg";
 import Image2 from "../../assets/img1.jpg";
@@ -34,7 +33,7 @@ const LoginPage = () => {
     <div className="insta-viewport-wrapper">
       <div className="insta-split-master">
 
-        {/* LEFT SIDE */}
+        {/* LEFT PANEL WITH DROP CARDS */}
         <div className="insta-left-panel">
           <div className="insta-left-content-box">
             <div className="insta-brand-logo-holder">
@@ -48,34 +47,34 @@ const LoginPage = () => {
             </h2>
 
             <div className="insta-stacked-showcase">
-              <div className="insta-mock-photo photo-left">
+              <div className="insta-mock-photo photo-left drop-card-1">
                 <div className="insta-card-img-placeholder">
-                  <img src={Image1} alt="" className="insta-post-image" />
+                  <img src={Image1} alt="Dev post" className="insta-post-image" />
                 </div>
               </div>
 
-              <div className="insta-mock-photo photo-center">
+              <div className="insta-mock-photo photo-center drop-card-2">
                 <div className="photo-card-top-bar">
                   <div className="photo-profile-badge"></div>
                   <div className="photo-profile-line"></div>
                 </div>
                 <div className="insta-card-img-placeholder pic-main">
-                  <img src={Image2} alt="" className="insta-post-image" />
+                  <img src={Image2} alt="Dev post main" className="insta-post-image" />
                 </div>
               </div>
 
-              <div className="insta-mock-photo photo-right">
+              <div className="insta-mock-photo photo-right drop-card-3">
                 <div className="insta-card-img-placeholder">
-                  <img src={Image3} alt="" className="insta-post-image" />
+                  <img src={Image3} alt="Dev post" className="insta-post-image" />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT SIDE — PROFESSIONAL LOGIN */}
+        {/* RIGHT PANEL WITH FLIPPING CONTAINER */}
         <div className="insta-right-panel">
-          <div className="insta-login-container">
+          <div key="login-container" className="insta-login-container">
 
             <div className="insta-brand-logo-holder login-mini-logo">
               <img src={Logo} alt="DevBlog Logo" className="insta-gradient-logo" />
@@ -90,7 +89,7 @@ const LoginPage = () => {
               <div className="insta-error-banner-dark">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12" />
                   <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
                 <span>{error}</span>
