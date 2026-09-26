@@ -21,13 +21,10 @@ const FeedPage = () => {
   const { posts, nextCursor, hasMore, loading, error, trending, trendingLoading } =
     useSelector((state) => state.feed);
   const { suggested, suggestedLoading } = useSelector((state) => state.user);
-
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  // 1. Fetch Feed Data Fix (Strict Dependency Handling)
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("Auth verified successfully! Fetching home feed posts...");
       dispatch(fetchPersonalizedFeed({}));
       dispatch(fetchTrendingFeed({ limit: 5 }));
       dispatch(fetchSuggestedUsers(5));
@@ -35,9 +32,8 @@ const FeedPage = () => {
     return () => {
       dispatch(clearFeed());
     };
-  }, [dispatch, isAuthenticated]); // Jaise hi isAuthenticated baad me retry hokar true hoga, API chal padegi!
+  }, [dispatch, isAuthenticated]);
 
-  // 2. Real-time updates via Socket.IO
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -45,7 +41,6 @@ const FeedPage = () => {
     if (!socket) return;
 
     const handleNewPost = (data) => {
-      console.log('Received new post via Socket.IO:', data.post);
       dispatch(addNewPostFromSocket(data.post));
     };
 
@@ -64,7 +59,6 @@ const FeedPage = () => {
 
   const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
 
-  // ─── 1. NOT AUTHENTICATED (LOGGED OUT HERO VIEW) ───────────────────────────
   if (!isAuthenticated) {
     return (
       <div className="logged-out-wrapper" style={{ minHeight: 'calc(100vh - 56px)' }}>
@@ -72,15 +66,11 @@ const FeedPage = () => {
           <div className="logged-out-hero-inner">
             <h1 className="logged-out-main-headline">Stay curious.</h1>
             <p className="logged-out-sub-description">
-              Discover stories, thinking, and expertise from writers on any topic. Share your ideas with the world.
+              Discover stories, thinking, and expertise from writers on any topic.
             </p>
             <div className="logged-out-cta-actions-group">
-              <Link to="/register" className="cta-button-primary">
-                Start writing
-              </Link>
-              <Link to="/explore" className="cta-button-secondary">
-                Explore
-              </Link>
+              <Link to="/register" className="cta-button-primary">Start writing</Link>
+              <Link to="/explore" className="cta-button-secondary">Explore</Link>
             </div>
           </div>
         </div>
@@ -93,36 +83,25 @@ const FeedPage = () => {
     );
   }
 
-  // ─── 2. AUTHENTICATED VIEW (MAIN TIMELINE) ─────────────────────
   return (
     <div className="feed-page-container">
       <div className="feed-layout-grid">
-        
-        {/* ─── Left Sidebar Section ─── */}
+
+        {/* --- Left Sidebar (Fixed LinkedIn Size) --- */}
         <aside className="feed-sidebar-left">
           <div className="feed-sticky-wrapper">
-            
-            {/* Miniature Profile Metadata Card */}
-            <div className="user-profile-sidebar-card">
-              {user?.coverImage?.url ? (
-                <div 
-                  className="user-card-cover-image" 
-                  style={{ backgroundImage: `url(${user.coverImage.url})` }}
-                >
-                  <div className="user-card-cover-overlay" />
-                </div>
-              ) : (
-                <div className="user-card-cover-gradient">
-                  <div className="user-card-cover-overlay" />
-                </div>
-              )}
-              
-              {/* Overlapping Avatar Area */}
-              <div className="user-card-avatar-wrapper">
-                <Avatar user={user} size="lg" linkTo={`/profile/${user?.username}`} />
-              </div>
 
-              <div className="user-card-meta-info">
+            <div className="insta-sidebar-card">
+              <div
+                className="user-card-cover-wrapper"
+                style={{
+                  backgroundImage: user?.coverImage?.url ? `url(${user.coverImage.url})` : 'none'
+                }}
+              />
+              <div className="user-card-body">
+                <div className="user-card-avatar-pos">
+                  <Avatar user={user} size="md" linkTo={`/profile/${user?.username}`} />
+                </div>
                 <Link to={`/profile/${user?.username}`} className="user-sidebar-name-link">
                   {user?.name}
                 </Link>
@@ -130,77 +109,62 @@ const FeedPage = () => {
                   <p className="user-sidebar-headline">{user.headline}</p>
                 )}
               </div>
-              
-              <div className="user-card-stats-list">
-                <Link to={`/profile/${user?.username}`} className="user-stat-row-item">
-                  <span>Followers</span>
-                  <span className="user-stat-number-value">{user?.followerCount || 0}</span>
+            </div>
+
+            <div className="insta-sidebar-card">
+              <div className="quick-nav-list">
+                <Link to="/my/stories" className="quick-link-item">
+                  <svg className="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                  <span>My Stories</span>
                 </Link>
-                <Link to={`/profile/${user?.username}`} className="user-stat-row-item">
-                  <span>Following</span>
-                  <span className="user-stat-number-value">{user?.followingCount || 0}</span>
+
+                <Link to="/saved" className="quick-link-item">
+                  <svg className="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                  </svg>
+                  <span>Saved Posts</span>
+                </Link>
+
+                <Link to="/notifications" className="quick-link-item">
+                  <svg className="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                  </svg>
+                  <span>Notifications</span>
+                </Link>
+
+                <Link to="/blog/new" className="quick-link-item" style={{ color: '#38bdf8' }}>
+                  <svg className="quick-link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  <span>Write a story</span>
                 </Link>
               </div>
             </div>
 
-            {/* Quick Feature Redirect Navigation Box */}
-            <div className="quick-navigation-box">
-              <Link to="/my/stories" className="quick-link-item">
-                <svg className="quick-link-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-                My Stories
-              </Link>
-              <Link to="/saved" className="quick-link-item">
-                <svg className="quick-link-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                </svg>
-                Saved Posts
-              </Link>
-              <Link to="/notifications" className="quick-link-item">
-                <svg className="quick-link-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                Notifications
-              </Link>
-              <Link to="/blog/new" className="quick-link-item write-story-trigger">
-                <svg className="quick-link-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Write a story
-              </Link>
-            </div>
-            
           </div>
         </aside>
 
-        {/* ─── Center Feed Timeline Section ─── */}
+        {/* --- Center Main Feed (Fixed 560px Width) --- */}
         <main className="feed-main-content">
-          
-          {/* Create Post/Story Input Trigger Panel */}
-          <div className="create-post-prompt-box">
-            <Avatar user={user} size="md" />
-            <Link to="/blog/new" className="fake-input-placeholder-btn">
-              Share your thoughts...
+          <div className="insta-create-box">
+            <Avatar user={user} size="sm" />
+            <Link to="/blog/new" className="insta-create-input-btn">
+              Start a post, {user?.name?.split(' ')[0]}...
             </Link>
           </div>
 
           {error && <div className="feed-error-status-alert">{error}</div>}
-
           {loading && posts.length === 0 && <LoadingSpinner className="py-12" />}
 
           {!loading && (!posts || posts.length === 0) && (
             <EmptyState
-              icon={
-                <svg style={{ width: '32px', height: '32px', color: '#8899a6' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-              }
               title="Your feed is empty"
-              description="Follow writers or explore trending posts to fill your feed."
+              description="Follow creators to fill your feed with stories."
               action={
                 <Link to="/explore" className="cta-button-primary" style={{ fontSize: '13px', padding: '8px 20px' }}>
-                  Explore posts
+                  Explore Posts
                 </Link>
               }
             />
@@ -215,34 +179,28 @@ const FeedPage = () => {
           )}
 
           {hasMore && <div ref={sentinelRef} className="feed-infinite-scroll-sentinel" />}
-
           {loading && posts.length > 0 && <LoadingSpinner className="py-8" />}
 
           {!hasMore && posts && posts.length > 0 && (
             <div className="feed-reached-end-caption">
-              You&apos;ve reached the end of your feed
+              You've caught up on all posts
             </div>
           )}
         </main>
 
-        {/* ─── Right Sidebar Section ─── */}
+        {/* --- Right Sidebar (Fixed 315px Width) --- */}
         <aside className="feed-sidebar-right">
           <div className="feed-sticky-wrapper">
-            <SuggestedUsers users={suggested} loading={suggestedLoading} />
-            <TrendingSidebar posts={trending} loading={trendingLoading} />
+            <div className="insta-sidebar-card" style={{ padding: '16px' }}>
+              <SuggestedUsers users={suggested} loading={suggestedLoading} />
+            </div>
 
-            <div className="feed-mini-footer-meta">
-              <div className="footer-links-inline-row">
-                <span>About</span>
-                <span>Help</span>
-                <span>Privacy</span>
-                <span>Terms</span>
-              </div>
-              <p style={{ margin: '4px 0 0 0' }}>DevBlog &copy; 2026</p>
+            <div className="insta-sidebar-card" style={{ padding: '16px' }}>
+              <TrendingSidebar posts={trending} loading={trendingLoading} />
             </div>
           </div>
         </aside>
-        
+
       </div>
     </div>
   );
