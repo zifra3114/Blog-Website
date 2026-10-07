@@ -8,7 +8,6 @@ import {
 } from './notificationSlice.js';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle.js';
 import NotificationItem from '../../components/ui/NotificationItem.jsx';
-import LoadingSpinner from '../../components/ui/LoadingSpinner.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import Pagination from '../../components/ui/Pagination.jsx';
 
@@ -89,7 +88,14 @@ const NotificationsPage = () => {
         </div>
       )}
 
-      {loading && <LoadingSpinner className="py-12" />}
+   {loading && (
+  <div className="py-12 text-center">
+    <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+    <p className="mt-3 text-sm text-gray-500">
+      Loading notifications...
+    </p>
+  </div>
+)}
 
       {!loading && notifications.length === 0 && (
         <EmptyState

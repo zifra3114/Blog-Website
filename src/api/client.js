@@ -12,7 +12,7 @@ let isRefreshing = false;
 let failedQueue = [];
 
 // ✅ FIXED: Hardcoded base URL ki jagah environment variable use kiya hai, fallback ke sath
-const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://zifra-blog-backend.hf.space/api/v1';
+const BACKEND_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://blog-website-backend-omega.vercel.app/api/v1';
 
 const client = axios.create({
   baseURL: BACKEND_BASE_URL,

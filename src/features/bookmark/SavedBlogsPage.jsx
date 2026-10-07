@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchSavedPosts } from '../blog/blogSlice.js';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle.js';
 import BlogCard from '../../components/ui/BlogCard.jsx';
-import LoadingSpinner from '../../components/ui/LoadingSpinner.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import Pagination from '../../components/ui/Pagination.jsx';
 
@@ -29,8 +28,12 @@ const SavedBlogsPage = () => {
         </div>
       )}
 
-      {savedLoading && <LoadingSpinner className="py-12" />}
-
+      {savedLoading && (
+  <div className="py-12 text-center">
+    <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+    <p className="mt-3 text-sm text-gray-500">Loading saved posts...</p>
+  </div>
+)}
       {!savedLoading && savedPosts.length === 0 && (
         <EmptyState
           icon={

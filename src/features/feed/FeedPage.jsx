@@ -9,7 +9,6 @@ import { getSocket } from '../../api/socket.js';
 import FeedPostCard from '../../components/feed/FeedPostCard.jsx';
 import SuggestedUsers from '../../components/feed/SuggestedUsers.jsx';
 import TrendingSidebar from '../../components/feed/TrendingSidebar.jsx';
-import LoadingSpinner from '../../components/ui/LoadingSpinner.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import Avatar from '../../components/ui/Avatar.jsx';
 import "../../styles/globals.css";
@@ -156,6 +155,7 @@ const FeedPage = () => {
           </div>
 
           {error && <div className="feed-error-status-alert">{error}</div>}
+
           {loading && posts.length === 0 && <LoadingSpinner className="py-12" />}
 
           {!loading && (!posts || posts.length === 0) && (
@@ -179,6 +179,7 @@ const FeedPage = () => {
           )}
 
           {hasMore && <div ref={sentinelRef} className="feed-infinite-scroll-sentinel" />}
+
           {loading && posts.length > 0 && <LoadingSpinner className="py-8" />}
 
           {!hasMore && posts && posts.length > 0 && (

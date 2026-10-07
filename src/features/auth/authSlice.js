@@ -140,8 +140,9 @@ const initialState = {
   user: null,
   isAuthenticated: false,
   loading: false,
+  authChecking: true,
   error: null,
-  message: null, // for success messages (e.g., "check your email")
+  message: null,
 };
 
 const authSlice = createSlice({
@@ -202,20 +203,19 @@ const authSlice = createSlice({
         state.user = null;
       })
 
-      // ── Fetch current user ──
-      .addCase(fetchCurrentUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload;
-      })
-      .addCase(fetchCurrentUser.rejected, (state) => {
-        state.loading = false;
-        state.isAuthenticated = false;
-        state.user = null;
-      })
+     .addCase(fetchCurrentUser.pending, (state) => {
+  state.authChecking = true;
+})
+.addCase(fetchCurrentUser.fulfilled, (state, action) => {
+  state.authChecking = false;
+  state.isAuthenticated = true;
+  state.user = action.payload;
+})
+.addCase(fetchCurrentUser.rejected, (state) => {
+  state.authChecking = false;
+  state.isAuthenticated = false;
+  state.user = null;
+})
 
       // ── Forgot password ──
       .addCase(forgotPassword.pending, (state) => {

@@ -69,14 +69,6 @@ const BlogDetailPage = () => {
     }
   };
 
-  if (detailLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '100px 0' }}>
-        <div className="insta-spinner insta-spinner-lg"></div>
-      </div>
-    );
-  }
-
   if (detailError) {
     return (
       <div className="insta-app-content-surface" style={{ textAlign: 'center', padding: '100px 20px' }}>

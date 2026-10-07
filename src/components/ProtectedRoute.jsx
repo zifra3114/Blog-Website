@@ -2,19 +2,16 @@ import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = () => {
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  const { isAuthenticated, authChecking } = useSelector(
+    (state) => state.auth
+  );
 
-  // Always show loading spinner while auth is being checked
-  // This prevents premature redirects during initial auth check
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="insta-spinner insta-spinner-lg"></div>
-      </div>
-    );
+  // Browser refresh par pehle authentication check complete hone do
+  if (authChecking) {
+    return null;
   }
 
-  // Only redirect after loading is complete and user is not authenticated
+  // Auth check complete hone ke baad hi login par bhejo
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
